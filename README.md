@@ -1,6 +1,11 @@
 # ziggity.nvim
 
-Open the [Ziggity](https://github.com/simoarpe/ziggity) git interface in a floating Neovim terminal, browse commit history in splits, and switch between repositories visited during your session with Telescope. Inspired by [lazygit.nvim](https://github.com/kdheepak/lazygit.nvim).
+Open the [Ziggity](https://github.com/simoarpe/ziggity) git interface in a floating Neovim terminal and browse commit history in splits.
+
+## Credits
+
+- Ziggity by simoarpe - git tui that powers this plugin. [Ziggity repository](https://github.com/simoarpe/ziggity)
+- lazygit.nvim by kdheepak - inspiration for the Neovim integration. [lazygit.nvim repository](https://github.com/kdheepak/lazygit.nvim)
 
 ## Requirements
 
@@ -66,7 +71,7 @@ vim.pack.add({ "https://github.com/JosefLundqvist/ziggity.nvim" })
 vim.keymap.set("n", "<leader>gg", "<cmd>Ziggity<cr>", { desc = "Open Ziggity" })
 ```
 
-On Neovim 0.11, run `:echo stdpath('data')` to find your data directory. Create `site/pack/ziggity/start` inside it, then run this in your terminal with the path filled in. Add the mapping from the example above to `init.lua` and restart Neovim.
+On Neovim 0.11, run `:echo stdpath('data')` to find your data directory. Create `site/pack/ziggity/start` inside it, then run this command in your terminal with the path filled in. Add the mapping from the example above to `init.lua` and restart Neovim.
 
 ```sh
 git clone https://github.com/JosefLundqvist/ziggity.nvim "<data directory>/site/pack/ziggity/start/ziggity.nvim"
@@ -98,7 +103,6 @@ The plugin works without a `setup()` call. To customize it, pass the settings yo
 | `winblend` | `0` | Float transparency. |
 | `border` | `"rounded"` | Neovim floating-window border style or custom border. |
 | `config_file` | `nil` | Path to the global Ziggity INI file. Overrides the inherited `ZIGGITY_CONFIG` for the terminal process. |
-| `track_on_buf_enter` | `false` | Track repositories when entering file buffers. |
 | `on_exit` | `nil` | Callback `function(code, cwd)` invoked after Ziggity exits. |
 
 The float uses `ZiggityFloat` and `ZiggityBorder`, which link to `NormalFloat` and `FloatBorder` by default.
@@ -117,13 +121,3 @@ editor_in_terminal = false
 ```
 
 Make sure `nvim` is on `PATH`. On Windows, Ziggity's editor command also needs `sh` on `PATH`, such as the one from Git for Windows. Ziggity composes commit messages inside its terminal interface. [Ziggity editor configuration](https://github.com/simoarpe/ziggity/blob/main/docs/configuration.md#editor-e)
-
-## Telescope repository picker
-
-With Telescope installed, load the extension after Telescope and ziggity.nvim are available. For lazy.nvim, setting `lazy = false` in the ziggity.nvim spec lets you load the extension during startup.
-
-```lua
-require("telescope").load_extension("ziggity")
-```
-
-Run `:Telescope ziggity` and press `<Enter>` on a repository to launch Ziggity there. The picker uses repository history from the current Neovim session. Opening Ziggity or browsing Git history adds a repository. To also track repositories as you switch between file buffers, enable `track_on_buf_enter` in the plugin settings and load the plugin at startup.

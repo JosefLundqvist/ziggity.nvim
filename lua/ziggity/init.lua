@@ -6,11 +6,9 @@ local defaults = {
   winblend = 0,
   border = "rounded",
   config_file = nil,
-  track_on_buf_enter = false,
   on_exit = nil,
 }
 local settings = defaults
-local visited = {}
 
 local function notify(message)
   vim.notify(message, vim.log.levels.WARN, { title = "ziggity.nvim" })
@@ -72,17 +70,6 @@ local function file_context()
   end
 end
 
-local function remember(root)
-  if root then
-    local previous = vim.fn.index(visited, root)
-    if previous >= 0 then
-      table.remove(visited, previous + 1)
-    end
-    table.insert(visited, 1, root)
-  end
-  return root
-end
-
 local function global_config(cwd)
   local path = settings.config_file or vim.env.ZIGGITY_CONFIG
   if path and path ~= "" then
@@ -101,23 +88,8 @@ function M.setup(opts)
   end, "an integer from 0 to 100")
   vim.validate("border", config.border, { "string", "table" })
   vim.validate("config_file", config.config_file, "string", true)
-  vim.validate("track_on_buf_enter", config.track_on_buf_enter, "boolean")
   vim.validate("on_exit", config.on_exit, "function", true)
   settings = config
-  local group = vim.api.nvim_create_augroup("ZiggityRepositories", { clear = true })
-  if settings.track_on_buf_enter then
-    vim.api.nvim_create_autocmd("BufEnter", { group = group, callback = M.track_current_file })
-    M.track_current_file()
-  end
-end
-
-function M.repositories()
-  return vim.deepcopy(visited)
-end
-
-function M.track_current_file()
-  local root = file_context()
-  remember(root)
 end
 
 function M.open(opts)
@@ -134,13 +106,8 @@ function M.open(opts)
     return notify("Git executable not found on PATH")
   end
 
-  local root = git_root(cwd)
   local config = global_config(cwd)
-  local job = require("ziggity.terminal").open(executable, cwd, config, settings)
-  if job then
-    remember(root)
-  end
-  return job
+  return require("ziggity.terminal").open(executable, cwd, config, settings)
 end
 
 function M.open_current_file()
@@ -168,7 +135,7 @@ function M.edit_config(opts)
 end
 
 function M.log()
-  local root = remember(git_root(vim.fn.getcwd()))
+  local root = git_root(vim.fn.getcwd())
   if not root then
     return notify("The working directory is outside a Git working tree")
   end
@@ -180,7 +147,6 @@ function M.log_current_file()
   if not path then
     return notify("The current buffer is not a file inside a Git working tree")
   end
-  remember(root)
   require("ziggity.history").open(root, path)
 end
 
