@@ -1,6 +1,6 @@
 # ziggity.nvim
 
-Open the Ziggity Git interface in a floating Neovim terminal, browse commit history in splits, and switch between repositories visited during your session with Telescope. Inspired by [lazygit.nvim](https://github.com/kdheepak/lazygit.nvim).
+Open the [Ziggity](https://github.com/simoarpe/ziggity) git interface in a floating Neovim terminal, browse commit history in splits, and switch between repositories visited during your session with Telescope. Inspired by [lazygit.nvim](https://github.com/kdheepak/lazygit.nvim).
 
 ## Requirements
 
